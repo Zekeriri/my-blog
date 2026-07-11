@@ -1,0 +1,48 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  const allTags = [...new Set(posts.flatMap((post) => post.data.tags))];
+
+  return allTags.map((tag) => ({
+    params: { tag },
+    props: {
+      tag,
+      posts: posts
+        .filter((post) => post.data.tags.includes(tag))
+        .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()),
+    },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<BaseLayout title={tag} description={`标签：${tag}`}>
+  <h1>标签：{tag}</h1>
+  <p class="meta">
+    <a href={`${import.meta.env.BASE_URL}tags/`}>← 返回全部标签</a>
+  </p>
+
+  {posts.map((post) => (
+    <article class="card">
+      <h2>
+        <a href={`${import.meta.env.BASE_URL}blog/${post.id}/`}>{post.data.title}</a>
+      </h2>
+      <div class="meta">
+        <time datetime={post.data.pubDate.toISOString()}>
+          {post.data.pubDate.toLocaleDateString('zh-CN')}
+        </time>
+        {' · '}
+        <a
+          class="category"
+          href={`${import.meta.env.BASE_URL}categories/${encodeURIComponent(post.data.category)}/`}
+        >
+          {post.data.category}
+        </a>
+      </div>
+    </article>
+  ))}
+</BaseLayout>

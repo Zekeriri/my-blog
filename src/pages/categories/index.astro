@@ -1,0 +1,40 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { CATEGORIES } from '../../config/categories';
+
+const categories = CATEGORIES;
+const allPosts = (await getCollection('blog')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+const postsByCategory = Object.fromEntries(
+  categories.map((category) => [
+    category,
+    allPosts.filter((post) => post.data.category === category),
+  ])
+);
+---
+
+<BaseLayout title="分类" description="按大类浏览文章">
+  <h1>分类</h1>
+  <p class="meta">大类：{categories.join('、')}</p>
+
+  {categories.map((category) => (
+    <section style="margin-bottom: 2rem;">
+      <h2>
+        <a href={`${import.meta.env.BASE_URL}categories/${encodeURIComponent(category)}/`}>
+          {category}
+        </a>
+        <span class="meta">（{postsByCategory[category].length} 篇）</span>
+      </h2>
+      <ul>
+        {postsByCategory[category].map((post) => (
+          <li>
+            <a href={`${import.meta.env.BASE_URL}blog/${post.id}/`}>{post.data.title}</a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
+</BaseLayout>
