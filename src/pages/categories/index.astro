@@ -2,11 +2,11 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { CATEGORIES } from '../../config/categories';
-import { getPostTitle } from '../../utils/post';
+import { getPostTitle, getSortDate } from '../../utils/post';
 
 const categories = CATEGORIES;
 const allPosts = (await getCollection('blog')).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+  (a, b) => getSortDate(b).valueOf() - getSortDate(a).valueOf()
 );
 
 const postsByCategory = Object.fromEntries(

@@ -1,7 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getPostTitle } from '../../utils/post';
+import PostMeta from '../../components/PostMeta.astro';
+import { getPostTitle, getSortDate } from '../../utils/post';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -13,7 +14,7 @@ export async function getStaticPaths() {
       category,
       posts: posts
         .filter((post) => post.data.category === category)
-        .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()),
+        .sort((a, b) => getSortDate(b).valueOf() - getSortDate(a).valueOf()),
     },
   }));
 }
@@ -32,11 +33,7 @@ const { category, posts } = Astro.props;
       <h2>
         <a href={`${import.meta.env.BASE_URL}blog/${post.id}/`}>{getPostTitle(post)}</a>
       </h2>
-      <div class="meta">
-        <time datetime={post.data.pubDate.toISOString()}>
-          {post.data.pubDate.toLocaleDateString('zh-CN')}
-        </time>
-      </div>
+      <PostMeta pubDate={post.data.pubDate} updatedDate={post.data.updatedDate} />
       {post.data.tags.length > 0 && (
         <div class="tags">
           {post.data.tags.map((tag) => (

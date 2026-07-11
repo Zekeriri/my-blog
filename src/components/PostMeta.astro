@@ -1,0 +1,37 @@
+---
+import { formatDate, shouldShowUpdated } from '../utils/post';
+
+interface Props {
+  pubDate: Date;
+  updatedDate?: Date;
+  category?: string;
+}
+
+const { pubDate, updatedDate, category } = Astro.props;
+const showUpdated = shouldShowUpdated(pubDate, updatedDate);
+---
+
+<div class="meta">
+  <span>
+    发布 <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+  </span>
+  {showUpdated && updatedDate && (
+    <>
+      {' · '}
+      <span>
+        更新 <time datetime={updatedDate.toISOString()}>{formatDate(updatedDate)}</time>
+      </span>
+    </>
+  )}
+  {category && (
+    <>
+      {' · '}
+      <a
+        class="category"
+        href={`${import.meta.env.BASE_URL}categories/${encodeURIComponent(category)}/`}
+      >
+        {category}
+      </a>
+    </>
+  )}
+</div>
