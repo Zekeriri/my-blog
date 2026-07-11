@@ -17,8 +17,6 @@ npm run dev
 
 ```md
 ---
-title: 文章标题
-description: 简短描述（可选）
 pubDate: 2026-07-10
 category: 算法题
 tags: [动态规划, 回溯]
@@ -27,7 +25,7 @@ tags: [动态规划, 回溯]
 正文内容……
 ```
 
-`category` 可选：`算法题`、`八股`、`学习笔记`。
+`category` 见 `src/content/blog/categories.json`。
 
 ## 部署
 

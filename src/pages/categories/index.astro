@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { CATEGORIES } from '../../config/categories';
+import { getPostTitle } from '../../utils/post';
 
 const categories = CATEGORIES;
 const allPosts = (await getCollection('blog')).sort(
@@ -31,7 +32,7 @@ const postsByCategory = Object.fromEntries(
       <ul>
         {postsByCategory[category].map((post) => (
           <li>
-            <a href={`${import.meta.env.BASE_URL}blog/${post.id}/`}>{post.data.title}</a>
+            <a href={`${import.meta.env.BASE_URL}blog/${post.id}/`}>{getPostTitle(post)}</a>
           </li>
         ))}
       </ul>
