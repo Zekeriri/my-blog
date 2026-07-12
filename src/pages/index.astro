@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostMeta from '../components/PostMeta.astro';
-import { getPostTitle, getSortDate } from '../utils/post';
+import { getPostTitle, getSortDate, getUpdatedDate } from '../utils/post';
 
 const posts = (await getCollection('blog')).sort(
   (a, b) => getSortDate(b).valueOf() - getSortDate(a).valueOf()
@@ -20,7 +20,7 @@ const posts = (await getCollection('blog')).sort(
       </h2>
       <PostMeta
         pubDate={post.data.pubDate}
-        updatedDate={post.data.updatedDate}
+        updatedDate={getUpdatedDate(post)}
         category={post.data.category}
       />
       {post.data.tags.length > 0 && (
