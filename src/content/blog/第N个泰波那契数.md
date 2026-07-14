@@ -6,10 +6,12 @@ tags:
   - 动态规划
 ---
 [1137. 第 N 个泰波那契数 - 力扣（LeetCode）](https://leetcode.cn/problems/n-th-tribonacci-number/description/)
+# 题意
+第 n 个泰波那契数等于第 n-1, n-2, n-3 的泰波那契数的和
+# 解法
+## 1. 递归
 
-# 1. 递归
-
-思路自然
+一层层往前求解, 思路自然
 
 ```python
 class Solution:
@@ -27,7 +29,8 @@ class Solution:
 时间复杂度: O(n) 用记忆化优化, 从 O(3^n) 到 O(n)  
 空间复杂度: O(n) 栈的深度
 
-# 2. 动态规划
+## 2. 动态规划
+套用模板
 
 - 定义: dp[i] 表示第 i 个泰波那契数
 - 状态转移方程: dp[i] = dp[i-1] + dp[i-2] + dp[i-3]
@@ -35,7 +38,7 @@ class Solution:
 - 顺序: 3->n
 - 返回值: dp[n]
 
-由于 dp[i] 只依赖前三个固定状态，可以用滚动数组优化
+由于 dp[i] 只依赖前三个固定状态，用滚动数组优化
 
 ```python
 class Solution:
