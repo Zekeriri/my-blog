@@ -5,7 +5,7 @@ tags:
   - Java
 ---
 # 是什么
-Array 是 Java 自带的长度固定的底层数据结构；ArrayList 是 Java 框架提供的长度可变的容器类，底层封装了 Array 来实现自动扩容。
+Array 是 Java 自带的长度固定的底层数据结构；ArrayList 是 Java 集合框架提供的长度可变的容器类，底层封装了 Array 来实现自动扩容。
 # 作用
 作用都是存储数据 ArrayList 可以在 Array 基础上自动扩容，并提供更多的 API。
 # 底层

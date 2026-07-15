@@ -42,3 +42,5 @@ Python 常用数据结构速查：
 - **取所有键/值**：`list(d.keys())`, `list(d.values())`, `list(d.items())`
 - 排序（按 key）：`sorted(d.items())`
 - 排序（按 value）：`sorted(d.items(), key=lambda x: x[1])`（升）或 `sorted(d.items(), key=lambda x: -x[1])`（降）
+**交换**:
+`nums[dest], nums[cur] = nums[cur], nums[dest]`
