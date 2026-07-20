@@ -42,5 +42,15 @@ Python 常用数据结构速查：
 - **取所有键/值**：`list(d.keys())`, `list(d.values())`, `list(d.items())`
 - 排序（按 key）：`sorted(d.items())`
 - 排序（按 value）：`sorted(d.items(), key=lambda x: x[1])`（升）或 `sorted(d.items(), key=lambda x: -x[1])`（降）
-**交换**:
-`nums[dest], nums[cur] = nums[cur], nums[dest]`
+
+**集合 (set)**
+- 创建：`s = set()` 或 `s = {1, 2, 3}`（空集合必须用 `set()`，`{}` 是字典）
+- 增删：`s.add(x)`，`s.remove(x)`（不存在报错），`s.discard(x)`（不存在不报错）
+- 判断：`x in s`，`x not in s`
+- 并集：`s1 | s2` 或 `s1.union(s2)`
+- 交集：`s1 & s2` 或 `s1.intersection(s2)`
+- 差集：`s1 - s2` 或 `s1.difference(s2)`
+- 去重：`list(set(arr))`（顺序不保留）
+
+**交换**
+- `nums[dest], nums[cur] = nums[cur], nums[dest]`
