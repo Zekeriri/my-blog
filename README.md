@@ -13,7 +13,7 @@ npm run dev
 
 ## 写文章
 
-在 `src/content/blog/` 下新建 `.md` 文件，例如：
+按分类在对应文件夹下新建 `.md`，例如 `src/content/blog/算法题/爬楼梯.md`：
 
 ```md
 ---
@@ -25,7 +25,10 @@ tags: [动态规划, 回溯]
 正文内容……
 ```
 
-`category` 见 `src/content/blog/categories.json`。
+- **标题 = 文件名**
+- **文件夹名 = category**（须一致）
+- 分类列表见 `src/content/blog/categories.json`
+- 更完整的写作说明见 **[操作指南.md](./操作指南.md)**
 
 ## 部署
 

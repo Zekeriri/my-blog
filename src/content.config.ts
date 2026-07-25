@@ -6,7 +6,10 @@ const optionalString = (value: unknown) =>
   value == null || value === '' ? undefined : String(value);
 
 const blog = defineCollection({
-  loader: glob({ base: './src/content/blog', pattern: '*.md' }),
+  loader: glob({
+    base: './src/content/blog',
+    pattern: ['**/*.md', '!**/_templates/**', '!**/_meta/**'],
+  }),
   schema: z.object({
     title: z.preprocess(optionalString, z.string().optional()),
     pubDate: z.coerce.date(),
