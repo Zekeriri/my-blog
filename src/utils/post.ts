@@ -77,9 +77,9 @@ export function getUpdatedDate(post: BlogPost): Date | undefined {
   return updated;
 }
 
-/** 排序用：取发布日期与最后更新日期中较新的 */
+/** 排序用：按发布日期 */
 export function getSortDate(post: BlogPost) {
-  return resolveUpdatedDate(post);
+  return post.data.pubDate;
 }
 
 export function shouldShowUpdated(pubDate: Date, updatedDate?: Date) {
