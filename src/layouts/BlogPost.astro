@@ -2,13 +2,13 @@
 import BaseLayout from './BaseLayout.astro';
 import PostMeta from '../components/PostMeta.astro';
 
-const { title, pubDate, updatedDate, category, tags } = Astro.props;
+const { title, pubDate, category, tags } = Astro.props;
 ---
 
 <BaseLayout title={title}>
   <article class="card prose">
     <h1>{title}</h1>
-    <PostMeta pubDate={pubDate} updatedDate={updatedDate} category={category} />
+    <PostMeta pubDate={pubDate} category={category} />
     {tags.length > 0 && (
       <div class="tags" style="margin-bottom: 1.5rem;">
         {tags.map((tag: string) => (
