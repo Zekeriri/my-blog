@@ -1,0 +1,239 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import {
+  TRAINING_IDS,
+  getPracticeLogPost,
+  parsePracticeLog,
+} from '../../utils/practice';
+
+const posts = await getCollection('blog');
+const base = import.meta.env.BASE_URL;
+
+function findPostHref(namePart: string) {
+  const post = posts.find(
+    (p) =>
+      p.data.category === '声乐' &&
+      !p.filePath?.endsWith('练习打卡.md') &&
+      (p.id.includes(namePart) || p.filePath?.includes(namePart))
+  );
+  return post ? `${base}blog/${post.id}/` : undefined;
+}
+
+const trainings = TRAINING_IDS.map((id) => ({
+  id,
+  label: id,
+  href: findPostHref(id === '音准' ? '音准' : id),
+}));
+
+const logPost = getPracticeLogPost(posts);
+const records = logPost ? parsePracticeLog(logPost.body ?? '') : [];
+const logHref = logPost ? `${base}blog/${logPost.id}/` : undefined;
+---
+
+<BaseLayout title="今日练习" description="根据练习打卡文档显示声乐每日进度">
+  <h1>今日练习</h1>
+  <p class="meta" id="practice-day-meta">加载中…</p>
+  {logHref ? (
+    <p class="meta">
+      数据来自 <a href={logHref}>练习打卡</a>
+      （在 Obsidian 里编辑该文档后提交即可更新）
+    </p>
+  ) : (
+    <p class="meta">未找到 `声乐/练习打卡.md`，请先创建该文档。</p>
+  )}
+
+  <section
+    class="card practice-today"
+    id="practice-app"
+    data-ids={JSON.stringify([...TRAINING_IDS])}
+    data-records={JSON.stringify(records)}
+  >
+    <div class="practice-summary">
+      <span id="practice-progress">0 / 4</span>
+      <span class="meta" id="practice-streak" style="margin:0;"></span>
+    </div>
+    <ul class="practice-list" id="practice-list">
+      {trainings.map((item) => (
+        <li>
+          <div class="practice-check" data-id={item.id} aria-pressed="false">
+            <span class="practice-box" aria-hidden="true"></span>
+            <span class="practice-label">{item.label}</span>
+          </div>
+          {item.href && (
+            <a class="practice-note" href={item.href}>笔记</a>
+          )}
+        </li>
+      ))}
+    </ul>
+    <p class="meta practice-hint" id="practice-today-note"></p>
+  </section>
+
+  <section class="card">
+    <h2>最近记录</h2>
+    <div id="practice-history" class="practice-history">
+      <p class="meta">暂无记录</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<script is:inline>
+  (function () {
+    var DAY_START_HOUR = 5;
+    var app = document.getElementById('practice-app');
+    if (!app) return;
+
+    var IDS = [];
+    var RECORDS = [];
+    try {
+      IDS = JSON.parse(app.getAttribute('data-ids') || '[]');
+      RECORDS = JSON.parse(app.getAttribute('data-records') || '[]');
+    } catch (e) {}
+
+    function pad(n) {
+      return n < 10 ? '0' + n : String(n);
+    }
+
+    function getPracticeDate(now) {
+      var d = new Date(now.getTime());
+      if (d.getHours() < DAY_START_HOUR) {
+        d.setDate(d.getDate() - 1);
+      }
+      return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+    }
+
+    function formatDisplayDate(key) {
+      var parts = key.split('-');
+      return parts[0] + '年' + Number(parts[1]) + '月' + Number(parts[2]) + '日';
+    }
+
+    function findDay(key) {
+      for (var i = 0; i < RECORDS.length; i++) {
+        if (RECORDS[i].date === key) return RECORDS[i];
+      }
+      return null;
+    }
+
+    function calcStreak(todayKey) {
+      var streak = 0;
+      var d = new Date(todayKey + 'T12:00:00');
+      for (var i = 0; i < 365; i++) {
+        var key =
+          d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+        var day = findDay(key);
+        var done = day && day.done ? day.done : [];
+        var all = IDS.every(function (id) {
+          return done.indexOf(id) !== -1;
+        });
+        if (!all) break;
+        streak += 1;
+        d.setDate(d.getDate() - 1);
+      }
+      return streak;
+    }
+
+    function notePreview(note, done) {
+      if (!note) return '';
+      var text = note;
+      done.forEach(function (id) {
+        text = text.split(id).join(' ');
+      });
+      text = text
+        .replace(/[,，、/|]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+      return text;
+    }
+
+    function render() {
+      var todayKey = getPracticeDate(new Date());
+      var day = findDay(todayKey);
+      var done = day && day.done ? day.done : [];
+
+      var meta = document.getElementById('practice-day-meta');
+      if (meta) {
+        meta.textContent =
+          '练习日：' +
+          formatDisplayDate(todayKey) +
+          '（每天凌晨 5 点换日）';
+      }
+
+      var progress = document.getElementById('practice-progress');
+      if (progress) {
+        progress.textContent = done.length + ' / ' + IDS.length;
+      }
+
+      var streakEl = document.getElementById('practice-streak');
+      if (streakEl) {
+        var streak = calcStreak(todayKey);
+        streakEl.textContent = streak > 0 ? '连续全勤 ' + streak + ' 天' : '';
+      }
+
+      document.querySelectorAll('.practice-check').forEach(function (el) {
+        var id = el.getAttribute('data-id');
+        var checked = done.indexOf(id) !== -1;
+        el.setAttribute('aria-pressed', checked ? 'true' : 'false');
+        el.classList.toggle('is-checked', checked);
+      });
+
+      var noteEl = document.getElementById('practice-today-note');
+      if (noteEl) {
+        var preview = notePreview(day && day.note ? day.note : '', done);
+        noteEl.textContent = preview
+          ? '今日备注：' + preview
+          : done.length
+            ? ''
+            : '今天还没打卡：在「练习打卡」里加上今天的日期和训练项。';
+      }
+
+      var history = document.getElementById('practice-history');
+      if (!history) return;
+
+      var list = RECORDS.slice(0, 30);
+      if (list.length === 0) {
+        history.innerHTML = '<p class="meta">暂无记录</p>';
+        return;
+      }
+
+      history.innerHTML = list
+        .map(function (rec) {
+          var items = IDS.map(function (id) {
+            var ok = rec.done.indexOf(id) !== -1;
+            return (
+              '<span class="practice-hist-item' +
+              (ok ? ' is-done' : '') +
+              '">' +
+              id +
+              (ok ? ' ✓' : '') +
+              '</span>'
+            );
+          }).join('');
+          var full =
+            IDS.every(function (id) {
+              return rec.done.indexOf(id) !== -1;
+            })
+              ? ' <span class="tag">全勤</span>'
+              : '';
+          var preview = notePreview(rec.note || '', rec.done || []);
+          var noteHtml = preview
+            ? '<p class="meta practice-hist-note">' + preview + '</p>'
+            : '';
+          return (
+            '<div class="practice-hist-row">' +
+            '<strong>' +
+            formatDisplayDate(rec.date) +
+            '</strong>' +
+            full +
+            '<div class="practice-hist-items">' +
+            items +
+            '</div>' +
+            noteHtml +
+            '</div>'
+          );
+        })
+        .join('');
+    }
+
+    render();
+  })();
+</script>

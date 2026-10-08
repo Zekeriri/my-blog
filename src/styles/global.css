@@ -198,3 +198,127 @@ footer.site-footer {
   font-size: 0.9rem;
   padding: 2rem 1rem;
 }
+
+/* 今日练习打卡 */
+.practice-today .practice-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.practice-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.practice-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.practice-check {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  text-align: left;
+  font: inherit;
+}
+
+.practice-hist-note {
+  margin: 0.35rem 0 0;
+}
+
+.practice-check.is-checked {
+  border-color: var(--accent);
+  background: var(--tag-bg);
+}
+
+.practice-box {
+  width: 1.15rem;
+  height: 1.15rem;
+  border: 2px solid var(--muted);
+  border-radius: 4px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.practice-check.is-checked .practice-box {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.practice-check.is-checked .practice-box::after {
+  content: "";
+  position: absolute;
+  left: 0.28rem;
+  top: 0.05rem;
+  width: 0.28rem;
+  height: 0.55rem;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+[data-theme="dark"] .practice-check.is-checked .practice-box::after {
+  border-color: #0f1115;
+}
+
+.practice-label {
+  font-weight: 600;
+}
+
+.practice-note {
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.practice-hint {
+  margin: 1rem 0 0;
+}
+
+.practice-history {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.practice-hist-row strong {
+  margin-right: 0.5rem;
+}
+
+.practice-hist-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.35rem;
+}
+
+.practice-hist-item {
+  font-size: 0.85rem;
+  color: var(--muted);
+  padding: 0.1rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.practice-hist-item.is-done {
+  color: var(--tag-text);
+  background: var(--tag-bg);
+  border-color: transparent;
+}
