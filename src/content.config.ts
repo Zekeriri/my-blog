@@ -8,7 +8,13 @@ const optionalString = (value: unknown) =>
 const blog = defineCollection({
   loader: glob({
     base: './src/content/blog',
-    pattern: ['**/*.md', '!**/_templates/**', '!**/_meta/**'],
+    pattern: [
+      '**/*.md',
+      '!**/_templates/**',
+      '!**/_meta/**',
+      '!**/八股/**',
+      '!**/算法题/**',
+    ],
   }),
   schema: z.object({
     title: z.preprocess(optionalString, z.string().optional()),

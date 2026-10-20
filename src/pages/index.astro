@@ -9,9 +9,9 @@ const posts = (await getCollection('blog')).sort(
 );
 ---
 
-<BaseLayout title="首页" description="算法题、八股与学习笔记">
+<BaseLayout title="首页" description="个人记录、声乐与学习笔记">
   <h1>最新文章</h1>
-  <p class="meta">用 Markdown 记录学习内容，按分类和标签整理。</p>
+  <p class="meta">用 Markdown 记录思考与练习，按分类和标签整理。</p>
 
   {posts.map((post) => (
     <article class="card">
