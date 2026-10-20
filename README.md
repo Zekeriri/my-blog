@@ -1,6 +1,6 @@
 # 我的学习博客
 
-基于 [Astro](https://astro.build) 的个人博客，用于记录算法题、八股和学习笔记。
+基于 [Astro](https://astro.build) 的个人博客，用于记录个人思考、声乐练习与学习笔记。
 
 ## 本地开发
 
@@ -13,13 +13,13 @@ npm run dev
 
 ## 写文章
 
-按分类在对应文件夹下新建 `.md`，例如 `src/content/blog/算法题/爬楼梯.md`：
+按分类在对应文件夹下新建 `.md`，例如 `src/content/blog/个人记录/自律能力.md`：
 
 ```md
 ---
 pubDate: 2026-07-10
-category: 算法题
-tags: [动态规划, 回溯]
+category: 个人记录
+tags: [自我反省]
 ---
 
 正文内容……
