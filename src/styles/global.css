@@ -240,10 +240,6 @@ footer.site-footer {
   font: inherit;
 }
 
-.practice-hist-note {
-  margin: 0.35rem 0 0;
-}
-
 .practice-check.is-checked {
   border-color: var(--accent);
   background: var(--tag-bg);
@@ -292,66 +288,7 @@ footer.site-footer {
   margin: 1rem 0 0;
 }
 
-.practice-history {
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-}
-
-.practice-hist-row strong {
-  margin-right: 0.5rem;
-}
-
-.practice-hist-items {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  margin-top: 0.35rem;
-}
-
-.practice-hist-item {
-  font-size: 0.85rem;
-  color: var(--muted);
-  padding: 0.1rem 0.5rem;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-}
-
-.practice-hist-item.is-done {
-  color: var(--tag-text);
-  background: var(--tag-bg);
-  border-color: transparent;
-}
-
 /* 练习热力图 */
-.practice-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(5.5rem, 1fr));
-  gap: 0.75rem;
-  margin-bottom: 1.25rem;
-}
-
-.practice-stat {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  padding: 0.65rem 0.75rem;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--bg);
-}
-
-.practice-stat strong {
-  font-size: 1.35rem;
-  line-height: 1.2;
-  color: var(--text);
-}
-
-.practice-stat span {
-  font-size: 0.8rem;
-  color: var(--muted);
-}
-
 .practice-heatmap-wrap {
   overflow-x: auto;
   padding-bottom: 0.25rem;

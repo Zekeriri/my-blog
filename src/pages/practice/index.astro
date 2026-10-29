@@ -71,7 +71,6 @@ const logHref = logPost ? `${base}blog/${logPost.id}/` : undefined;
 
   <section class="card">
     <h2>练习热力图</h2>
-    <div class="practice-stats" id="practice-stats"></div>
     <div class="practice-heatmap-wrap">
       <div class="practice-heatmap" id="practice-heatmap" aria-label="近一年练习热力图"></div>
     </div>
@@ -85,13 +84,6 @@ const logHref = logPost ? `${base}blog/${logPost.id}/` : undefined;
       <span>多</span>
     </div>
     <p class="meta" id="practice-heatmap-tip">颜色越深，当天完成的训练项越多（最多 4 项）。</p>
-  </section>
-
-  <section class="card">
-    <h2>最近记录</h2>
-    <div id="practice-history" class="practice-history">
-      <p class="meta">暂无记录</p>
-    </div>
   </section>
 </BaseLayout>
 
@@ -162,33 +154,6 @@ const logHref = logPost ? `${base}blog/${logPost.id}/` : undefined;
       return streak;
     }
 
-    function calcLongestStreak(requireFull) {
-      var best = 0;
-      var current = 0;
-      var keys = Object.keys(recordMap).sort();
-      if (keys.length === 0) return 0;
-
-      var start = parseKey(keys[0]);
-      var end = parseKey(keys[keys.length - 1]);
-      for (var d = new Date(start.getTime()); d <= end; d.setDate(d.getDate() + 1)) {
-        var key = dateKeyFromDate(d);
-        var day = findDay(key);
-        var done = day && day.done ? day.done : [];
-        var ok = requireFull
-          ? IDS.every(function (id) {
-              return done.indexOf(id) !== -1;
-            })
-          : done.length > 0;
-        if (ok) {
-          current += 1;
-          if (current > best) best = current;
-        } else {
-          current = 0;
-        }
-      }
-      return best;
-    }
-
     function notePreview(note, done) {
       if (!note) return '';
       var text = note;
@@ -210,11 +175,9 @@ const logHref = logPost ? `${base}blog/${logPost.id}/` : undefined;
 
     function renderHeatmap(todayKey) {
       var heatmap = document.getElementById('practice-heatmap');
-      var stats = document.getElementById('practice-stats');
       if (!heatmap) return;
 
       var today = parseKey(todayKey);
-      // GitHub 风格：每列周日→周六；最后一列含本周六
       var lastSaturday = new Date(today.getTime());
       lastSaturday.setDate(lastSaturday.getDate() + (6 - lastSaturday.getDay()));
       var firstSunday = new Date(lastSaturday.getTime());
@@ -305,46 +268,6 @@ const logHref = logPost ? `${base}blog/${logPost.id}/` : undefined;
         '</div></div>';
 
       heatmap.innerHTML = monthsHtml + bodyHtml;
-
-      if (stats) {
-        var practicedDays = RECORDS.filter(function (r) {
-          return r.done && r.done.length > 0;
-        }).length;
-        var totalItems = RECORDS.reduce(function (sum, r) {
-          return sum + (r.done ? r.done.length : 0);
-        }, 0);
-        var fullDays = RECORDS.filter(function (r) {
-          return (
-            r.done &&
-            IDS.every(function (id) {
-              return r.done.indexOf(id) !== -1;
-            })
-          );
-        }).length;
-        var longestAny = calcLongestStreak(false);
-        var longestFull = calcLongestStreak(true);
-        var currentAny = calcStreak(todayKey, false);
-
-        stats.innerHTML =
-          '<div class="practice-stat"><strong>' +
-          practicedDays +
-          '</strong><span>累计练习天</span></div>' +
-          '<div class="practice-stat"><strong>' +
-          totalItems +
-          '</strong><span>累计训练项</span></div>' +
-          '<div class="practice-stat"><strong>' +
-          fullDays +
-          '</strong><span>全勤天</span></div>' +
-          '<div class="practice-stat"><strong>' +
-          currentAny +
-          '</strong><span>当前连续</span></div>' +
-          '<div class="practice-stat"><strong>' +
-          longestAny +
-          '</strong><span>最长连续</span></div>' +
-          '<div class="practice-stat"><strong>' +
-          longestFull +
-          '</strong><span>最长全勤</span></div>';
-      }
     }
 
     function render() {
@@ -389,53 +312,6 @@ const logHref = logPost ? `${base}blog/${logPost.id}/` : undefined;
       }
 
       renderHeatmap(todayKey);
-
-      var history = document.getElementById('practice-history');
-      if (!history) return;
-
-      var list = RECORDS.slice(0, 30);
-      if (list.length === 0) {
-        history.innerHTML = '<p class="meta">暂无记录</p>';
-        return;
-      }
-
-      history.innerHTML = list
-        .map(function (rec) {
-          var items = IDS.map(function (id) {
-            var ok = rec.done.indexOf(id) !== -1;
-            return (
-              '<span class="practice-hist-item' +
-              (ok ? ' is-done' : '') +
-              '">' +
-              id +
-              (ok ? ' ✓' : '') +
-              '</span>'
-            );
-          }).join('');
-          var full =
-            IDS.every(function (id) {
-              return rec.done.indexOf(id) !== -1;
-            })
-              ? ' <span class="tag">全勤</span>'
-              : '';
-          var preview = notePreview(rec.note || '', rec.done || []);
-          var noteHtml = preview
-            ? '<p class="meta practice-hist-note">' + preview + '</p>'
-            : '';
-          return (
-            '<div class="practice-hist-row">' +
-            '<strong>' +
-            formatDisplayDate(rec.date) +
-            '</strong>' +
-            full +
-            '<div class="practice-hist-items">' +
-            items +
-            '</div>' +
-            noteHtml +
-            '</div>'
-          );
-        })
-        .join('');
     }
 
     render();
