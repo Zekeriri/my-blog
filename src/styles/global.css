@@ -288,6 +288,42 @@ footer.site-footer {
   margin: 1rem 0 0;
 }
 
+/* 复盘 */
+.review-today h2,
+.review-history h3 {
+  margin: 0 0 0.75rem;
+}
+
+.review-body p {
+  margin: 0 0 0.65rem;
+}
+
+.review-body p:last-child {
+  margin-bottom: 0;
+}
+
+.review-history {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.review-hist-row {
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.review-hist-row:first-child {
+  padding-top: 0;
+  border-top: none;
+}
+
+.review-hist-row h3 {
+  font-size: 1rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
 /* 练习热力图 */
 .practice-heatmap-wrap {
   overflow-x: auto;
