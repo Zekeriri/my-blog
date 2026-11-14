@@ -56,7 +56,7 @@ export function getReviewLogPost(posts: CollectionEntry<'blog'>[]) {
   return posts.find(
     (p) =>
       p.filePath?.endsWith('复盘.md') ||
-      p.id === '个人记录/复盘' ||
+      p.id === '提升自己/复盘' ||
       p.id.endsWith('/复盘')
   );
 }
