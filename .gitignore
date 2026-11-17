@@ -12,6 +12,10 @@ dist/
 .env.*
 !.env.example
 
+# 文章明文备份（age 加解密工作流，切勿提交）
+**/*.plain.md
+**/_plain/
+
 # 日志
 *.log
 npm-debug.log*

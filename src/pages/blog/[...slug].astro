@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BlogPost from '../../layouts/BlogPost.astro';
+import EncryptedGate from '../../components/EncryptedGate.astro';
 import { getPostTitle } from '../../utils/post';
 
 export async function getStaticPaths() {
@@ -12,14 +13,34 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
-const { Content } = await render(post);
+const encrypted =
+  typeof post.body === 'string' && /<!--\s*encrypted:age\s*-->/.test(post.body);
+
+const title = getPostTitle(post);
+const { Content } = encrypted ? { Content: null } : await render(post);
 ---
 
-<BlogPost
-  title={getPostTitle(post)}
-  pubDate={post.data.pubDate}
-  category={post.data.category}
-  tags={post.data.tags}
->
-  <Content />
-</BlogPost>
+{
+  encrypted ? (
+    <BlogPost title={title} pubDate={post.data.pubDate} category={post.data.category} tags={[]}>
+      <EncryptedGate />
+      <p class="encrypted-placeholder">此页内容已加密。</p>
+    </BlogPost>
+  ) : (
+    <BlogPost
+      title={title}
+      pubDate={post.data.pubDate}
+      category={post.data.category}
+      tags={post.data.tags}
+    >
+      <Content />
+    </BlogPost>
+  )
+}
+
+<style>
+  .encrypted-placeholder {
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+</style>

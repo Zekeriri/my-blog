@@ -1,0 +1,206 @@
+---
+/** 加密文全屏乱码门：点进文章后像游戏拒止画面，随后自动返回 */
+const homeHref = import.meta.env.BASE_URL;
+---
+
+<div
+  id="encrypted-gate"
+  class="encrypted-gate"
+  data-home={homeHref}
+  role="alertdialog"
+  aria-label="内容已加密"
+>
+  <pre id="encrypted-gate-rain" class="encrypted-gate__rain" aria-hidden="true"></pre>
+  <div class="encrypted-gate__hud">
+    <p class="encrypted-gate__status" id="encrypted-gate-status">◆ SIGNAL CORRUPTED ◆</p>
+    <p class="encrypted-gate__hint">返回中…</p>
+  </div>
+</div>
+
+<style>
+  .encrypted-gate {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    overflow: hidden;
+    background: #050605;
+    color: #7dff9a;
+    font-family: "Cascadia Mono", "Consolas", "Courier New", monospace;
+    cursor: none;
+    user-select: none;
+  }
+
+  .encrypted-gate__rain {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    padding: 0.75rem 1rem;
+    overflow: hidden;
+    font-size: clamp(11px, 1.6vw, 14px);
+    line-height: 1.35;
+    letter-spacing: 0.04em;
+    white-space: pre;
+    word-break: break-all;
+    opacity: 0.85;
+    text-shadow: 0 0 6px rgba(125, 255, 154, 0.35);
+    animation: gate-flicker 0.12s steps(2) infinite, gate-shake 2.4s ease-in-out infinite;
+  }
+
+  .encrypted-gate__hud {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    pointer-events: none;
+    text-align: center;
+    gap: 0.75rem;
+    background: radial-gradient(ellipse at center, transparent 20%, rgba(0, 0, 0, 0.72) 75%);
+  }
+
+  .encrypted-gate__status {
+    margin: 0;
+    font-size: clamp(1.1rem, 3.5vw, 1.75rem);
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: #b8ffc8;
+    text-shadow:
+      0 0 10px rgba(125, 255, 154, 0.7),
+      2px 0 #ff3b3b,
+      -2px 0 #3bfffc;
+    animation: gate-glitch 0.9s steps(2) infinite;
+  }
+
+  .encrypted-gate__hint {
+    margin: 0;
+    font-size: 0.85rem;
+    letter-spacing: 0.28em;
+    color: rgba(125, 255, 154, 0.65);
+    animation: gate-blink 1s step-end infinite;
+  }
+
+  @keyframes gate-flicker {
+    0%,
+    100% {
+      opacity: 0.8;
+    }
+    50% {
+      opacity: 0.95;
+    }
+  }
+
+  @keyframes gate-shake {
+    0%,
+    100% {
+      transform: translate(0, 0);
+    }
+    20% {
+      transform: translate(-1px, 0.5px);
+    }
+    40% {
+      transform: translate(1px, -0.5px);
+    }
+    60% {
+      transform: translate(0.5px, 1px);
+    }
+    80% {
+      transform: translate(-0.5px, -1px);
+    }
+  }
+
+  @keyframes gate-glitch {
+    0%,
+    100% {
+      transform: translate(0);
+      clip-path: inset(0 0 0 0);
+    }
+    25% {
+      transform: translate(-3px, 1px);
+      clip-path: inset(10% 0 40% 0);
+    }
+    50% {
+      transform: translate(3px, -1px);
+      clip-path: inset(30% 0 20% 0);
+    }
+    75% {
+      transform: translate(-1px, 2px);
+      clip-path: inset(50% 0 5% 0);
+    }
+  }
+
+  @keyframes gate-blink {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.25;
+    }
+  }
+</style>
+
+<script>
+  (() => {
+    const root = document.getElementById('encrypted-gate');
+    const rain = document.getElementById('encrypted-gate-rain');
+    const status = document.getElementById('encrypted-gate-status');
+    if (!root || !rain) return;
+
+    const home = root.getAttribute('data-home') || '/';
+    const chars =
+      'ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ' +
+      '01░▒▓█▄▀■□▪▫╬╪╫║╔╗╚╝═' +
+      'ABCDEF#$%&@*+=<>?/\\' +
+      '※¤§†‡¶';
+
+    const lines = Math.max(18, Math.floor(window.innerHeight / 16));
+    const cols = Math.max(40, Math.floor(window.innerWidth / 9));
+
+    function randChar() {
+      return chars[Math.floor(Math.random() * chars.length)];
+    }
+
+    function paint() {
+      let out = '';
+      for (let r = 0; r < lines; r++) {
+        let row = '';
+        for (let c = 0; c < cols; c++) row += randChar();
+        out += row + '\n';
+      }
+      rain.textContent = out;
+    }
+
+    paint();
+    const tick = window.setInterval(paint, 70);
+
+    const messages = [
+      '◆ SIGNAL CORRUPTED ◆',
+      '◆ ACCESS DENIED ◆',
+      '◆ DATA LOCKED ◆',
+      '◆ 無意味な文字列 ◆',
+    ];
+    let mi = 0;
+    const msgTick = window.setInterval(() => {
+      if (!status) return;
+      mi = (mi + 1) % messages.length;
+      status.textContent = messages[mi];
+    }, 380);
+
+    function leave() {
+      window.clearInterval(tick);
+      window.clearInterval(msgTick);
+      if (window.history.length > 1) {
+        window.history.back();
+        // 若 back 未离开（极少情况），再强制回首页
+        window.setTimeout(() => {
+          if (document.getElementById('encrypted-gate')) {
+            window.location.href = home;
+          }
+        }, 400);
+      } else {
+        window.location.href = home;
+      }
+    }
+
+    window.setTimeout(leave, 2200);
+  })();
+</script>
