@@ -9,28 +9,35 @@ const posts = (await getCollection('blog')).sort(
 );
 ---
 
-<BaseLayout title="首页" description="个人记录、声乐与学习笔记">
-  <h1>最新文章</h1>
-  <p class="meta">用 Markdown 记录思考与练习，按分类和标签整理。</p>
+<BaseLayout title="首页" description="我的空间 — 电子迷幻个人记录">
+  <section class="space-hero">
+    <p class="space-hero__eyebrow">NEEDY / DIGITAL / DIARY</p>
+    <h1 class="space-hero__brand" data-text="我的空间">我的空间</h1>
+    <p class="space-hero__line">沉浸、过载、碎裂又拼起来的私人频道。</p>
+  </section>
 
-  {posts.map((post) => (
-    <article class="card">
-      <h2>
-        <a href={`${import.meta.env.BASE_URL}blog/${post.id}/`}>{getPostTitle(post)}</a>
-      </h2>
-      <PostMeta
-        pubDate={post.data.pubDate}
-        category={post.data.category}
-      />
-      {post.data.tags.length > 0 && (
-        <div class="tags">
-          {post.data.tags.map((tag) => (
-            <a class="tag" href={`${import.meta.env.BASE_URL}tags/${encodeURIComponent(tag)}/`}>
-              {tag}
-            </a>
-          ))}
-        </div>
-      )}
-    </article>
-  ))}
+  <section class="feed">
+    <div class="feed__head">
+      <h2 class="feed__title">最新信号</h2>
+      <span class="feed__meta">{posts.length} entries</span>
+    </div>
+
+    {posts.map((post) => (
+      <article class="card card--post">
+        <h2>
+          <a href={`${import.meta.env.BASE_URL}blog/${post.id}/`}>{getPostTitle(post)}</a>
+        </h2>
+        <PostMeta pubDate={post.data.pubDate} category={post.data.category} />
+        {post.data.tags.length > 0 && (
+          <div class="tags">
+            {post.data.tags.map((tag) => (
+              <a class="tag" href={`${import.meta.env.BASE_URL}tags/${encodeURIComponent(tag)}/`}>
+                {tag}
+              </a>
+            ))}
+          </div>
+        )}
+      </article>
+    ))}
+  </section>
 </BaseLayout>

@@ -2,6 +2,7 @@
 import '../styles/global.css';
 
 const { title, description } = Astro.props;
+const siteName = '我的空间';
 ---
 
 <!doctype html>
@@ -9,29 +10,41 @@ const { title, description } = Astro.props;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content={description ?? '个人博客'} />
-    <title>{title ? `${title} | 我的博客` : '我的博客'}</title>
+    <meta name="description" content={description ?? '电子迷幻个人空间'} />
+    <title>{title ? `${title} | ${siteName}` : siteName}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DotGothic16&family=IBM+Plex+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;700;900&display=swap"
+      rel="stylesheet"
+    />
     <script is:inline>
       (function () {
         try {
           var stored = localStorage.getItem('theme');
-          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          var theme = stored === 'light' || stored === 'dark'
-            ? stored
-            : prefersDark
-              ? 'dark'
-              : 'light';
+          var theme = stored === 'light' || stored === 'dark' ? stored : 'dark';
           document.documentElement.setAttribute('data-theme', theme);
         } catch (e) {
-          document.documentElement.setAttribute('data-theme', 'light');
+          document.documentElement.setAttribute('data-theme', 'dark');
         }
       })();
     </script>
   </head>
   <body>
+    <div class="fx-scanlines" aria-hidden="true"></div>
+    <div class="fx-noise" aria-hidden="true"></div>
+    <div class="fx-vignette" aria-hidden="true"></div>
+
     <header class="site-header">
+      <div class="site-header__hud">
+        <span class="hud-chip">LIVE</span>
+        <span class="hud-chip hud-chip--dim" id="hud-clock">00:00:00</span>
+        <span class="hud-chip hud-chip--dim">SIGNAL OK</span>
+      </div>
       <nav>
-        <a class="site-title" href={import.meta.env.BASE_URL}>我的博客</a>
+        <a class="site-title" href={import.meta.env.BASE_URL} data-text={siteName}>
+          <span class="site-title__label">{siteName}</span>
+        </a>
         <a href={import.meta.env.BASE_URL}>首页</a>
         <a href={`${import.meta.env.BASE_URL}practice/`}>今日练习</a>
         <a href={`${import.meta.env.BASE_URL}review/`}>复盘</a>
@@ -41,34 +54,51 @@ const { title, description } = Astro.props;
           type="button"
           class="theme-toggle"
           id="theme-toggle"
-          aria-label="切换黑夜模式"
-          title="切换黑夜模式"
+          aria-label="切换主题"
+          title="切换主题"
         >
-          <span class="icon-moon" aria-hidden="true">☾</span>
-          <span class="icon-sun" aria-hidden="true">☀</span>
+          <span class="icon-moon" aria-hidden="true">夜</span>
+          <span class="icon-sun" aria-hidden="true">昼</span>
         </button>
       </nav>
     </header>
+
     <main>
       <slot />
     </main>
+
     <footer class="site-footer">
+      <p class="site-footer__brand">我的空间</p>
       <p>不疑, 不惧, 去求知, 知晓一切, 方得救赎</p>
     </footer>
+
     <script is:inline>
       (function () {
         var btn = document.getElementById('theme-toggle');
-        if (!btn) return;
-        btn.addEventListener('click', function () {
-          var current = document.documentElement.getAttribute('data-theme') === 'dark'
-            ? 'dark'
-            : 'light';
-          var next = current === 'dark' ? 'light' : 'dark';
-          document.documentElement.setAttribute('data-theme', next);
-          try {
-            localStorage.setItem('theme', next);
-          } catch (e) {}
-        });
+        if (btn) {
+          btn.addEventListener('click', function () {
+            var current = document.documentElement.getAttribute('data-theme') === 'dark'
+              ? 'dark'
+              : 'light';
+            var next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {}
+          });
+        }
+
+        var clock = document.getElementById('hud-clock');
+        function tick() {
+          if (!clock) return;
+          var d = new Date();
+          var h = String(d.getHours()).padStart(2, '0');
+          var m = String(d.getMinutes()).padStart(2, '0');
+          var s = String(d.getSeconds()).padStart(2, '0');
+          clock.textContent = h + ':' + m + ':' + s;
+        }
+        tick();
+        setInterval(tick, 1000);
       })();
     </script>
   </body>
